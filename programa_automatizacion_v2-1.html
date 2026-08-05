@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programa de Automatización Inteligente de Procesos Operativos — FERTILAB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F2E38;
+    --navy-2:#123C46;
+    --teal:#2E8C82;
+    --teal-dim:#DCEEEA;
+    --amber:#C4823A;
+    --paper:#F7F5EF;
+    --ink:#152227;
+    --grey:#5D6C70;
+    --line: rgba(15,46,56,.14);
+    --card: #FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fraunces', serif; margin:0; color:var(--navy);}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--amber); font-weight:600;
+  }
+  .wrap{max-width:1040px; margin:0 auto; padding:0 32px;}
+  a{color:inherit;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:50; background:rgba(247,245,239,.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+  }
+  nav .wrap{display:flex; align-items:center; justify-content:space-between; padding:14px 32px; gap:16px;}
+  .brand{font-family:'Fraunces',serif; font-weight:600; font-size:16px; color:var(--navy); white-space:nowrap;}
+  .brand span{color:var(--amber);}
+  .navlinks{display:flex; gap:4px; overflow-x:auto; scrollbar-width:none;}
+  .navlinks::-webkit-scrollbar{display:none;}
+  .navlinks a{
+    font-size:12.5px; padding:7px 11px; border-radius:20px; white-space:nowrap;
+    text-decoration:none; color:var(--grey); font-weight:500; transition:.15s;
+  }
+  .navlinks a:hover, .navlinks a.active{background:var(--navy); color:#fff;}
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    padding:96px 0 64px; position:relative; overflow:hidden;
+    background:
+      radial-gradient(900px 420px at 82% -10%, rgba(46,140,130,.16), transparent 60%),
+      var(--paper);
+  }
+  header.hero .badge{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    letter-spacing:.12em; color:var(--amber); background:#fff; border:1px solid var(--amber);
+    padding:5px 12px; border-radius:20px; margin-bottom:22px; font-weight:600;
+  }
+  header.hero h1{font-size:clamp(34px,5vw,56px); line-height:1.06; font-weight:600; max-width:820px;}
+  header.hero .sub{font-size:16px; color:var(--grey); max-width:620px; margin-top:20px; line-height:1.6;}
+  header.hero .meta{display:flex; gap:28px; margin-top:36px; flex-wrap:wrap;}
+  header.hero .meta div{font-size:13px; color:var(--grey);}
+  header.hero .meta b{display:block; color:var(--navy); font-size:14px; font-family:'IBM Plex Mono',monospace;}
+
+  section{padding:64px 0; border-top:1px solid var(--line);}
+  .section-head{margin-bottom:32px; max-width:700px;}
+  .section-head .eyebrow{margin-bottom:10px; display:block;}
+  .section-head h2{font-size:clamp(24px,3vw,32px); font-weight:600;}
+  .section-head p{color:var(--grey); margin-top:12px; line-height:1.65; font-size:15px;}
+
+  /* ---------- KPI ---------- */
+  .kpi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .kpi-card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 20px;
+    transition:.2s;
+  }
+  .kpi-card:hover{border-color:var(--teal); transform:translateY(-2px);}
+  .kpi-card .num{font-family:'Fraunces',serif; font-size:34px; color:var(--teal); font-weight:600;}
+  .kpi-card .num.amber{color:var(--amber);}
+  .kpi-card .label{font-size:13px; color:var(--navy); font-weight:600; margin-top:6px;}
+  .kpi-card .cadence{font-size:11.5px; color:var(--grey); margin-top:4px; font-family:'IBM Plex Mono',monospace;}
+  .kpi-note{margin-top:18px; font-size:13px; color:var(--grey); font-style:italic;}
+
+  /* ---------- ARCHITECTURE ---------- */
+  .arch{display:grid; grid-template-columns:1.1fr .9fr; gap:36px; align-items:center;}
+  .arch-layers{display:flex; flex-direction:column; gap:10px;}
+  .layer{
+    border:1px solid var(--line); background:var(--card); border-radius:12px; padding:16px 18px;
+    cursor:pointer; transition:.18s; position:relative;
+  }
+  .layer:hover, .layer.active{border-color:var(--teal); background:var(--teal-dim);}
+  .layer .ltitle{font-weight:600; font-size:14px; color:var(--navy); display:flex; align-items:center; gap:10px;}
+  .layer .ltitle .dot{width:9px;height:9px;border-radius:50%; background:var(--teal); flex:none;}
+  .layer .ldesc{font-size:12.5px; color:var(--grey); margin-top:6px; line-height:1.55; display:none;}
+  .layer.active .ldesc{display:block;}
+  .arch-visual{
+    background:var(--navy); border-radius:18px; padding:28px; min-height:340px;
+    display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+  }
+  .arch-visual svg{width:100%; height:auto;}
+  .node-label{font-family:'IBM Plex Mono',monospace; font-size:9px; fill:#B9CFCB;}
+
+  /* ---------- ROADMAP ---------- */
+  .status-box{
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--amber);
+    border-radius:10px; padding:18px 20px; font-size:14px; line-height:1.65; color:var(--ink); margin-bottom:32px;
+  }
+  .status-box b{color:var(--navy);}
+  .timeline{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; position:relative;}
+  .phase{
+    background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px;
+    cursor:pointer; transition:.18s;
+  }
+  .phase:hover{border-color:var(--teal);}
+  .phase .pnum{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--amber); font-weight:600;}
+  .phase h3{font-size:19px; margin-top:6px;}
+  .phase .horizon{font-size:12.5px; color:var(--grey); margin-top:2px; font-family:'IBM Plex Mono',monospace;}
+  .phase ul{margin:14px 0 0; padding-left:18px; font-size:13.5px; color:var(--ink); line-height:1.8;}
+  .phase-note{margin-top:22px; font-size:13.5px; color:var(--grey); line-height:1.6;}
+
+  /* ---------- HYBRID VENN ---------- */
+  .hybrid{display:grid; grid-template-columns:.85fr 1.15fr; gap:36px; align-items:center;}
+  .hybrid ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;}
+  .hybrid li{
+    background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 16px;
+    font-size:13.5px; display:flex; gap:10px; align-items:flex-start;
+  }
+  .hybrid li::before{content:"→"; color:var(--teal); font-weight:700; flex:none;}
+
+  /* ---------- GOVERNANCE CHECKLIST ---------- */
+  .gov-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  .gov-item{
+    background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px;
+    font-size:13.5px; line-height:1.5;
+  }
+  .gov-item .gi-title{font-weight:600; color:var(--navy); font-size:14px; margin-bottom:6px; display:flex; gap:8px; align-items:center;}
+  .gov-item .gi-title .tick{
+    width:20px;height:20px;border-radius:6px;background:var(--teal-dim); color:var(--teal);
+    display:flex;align-items:center;justify-content:center; font-size:12px; font-weight:700; flex:none;
+  }
+  code{font-family:'IBM Plex Mono',monospace; font-size:12px; background:var(--teal-dim); padding:1px 5px; border-radius:4px; color:var(--navy);}
+  .big-statement{
+    font-family:'Fraunces',serif; font-weight:700; font-size:clamp(22px,3vw,30px);
+    color:var(--navy); line-height:1.25; margin-top:24px;
+  }
+
+  /* ---------- AURORA ---------- */
+  .aurora-wrap{background:var(--navy); border-radius:20px; padding:40px; color:#fff;}
+  .aurora-wrap h2{color:#fff;}
+  .aurora-wrap .section-head p{color:#B9CFCB;}
+  .aurora-visual{margin-top:24px;}
+
+  /* ---------- MODALITY TABS ---------- */
+  .tabs{display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;}
+  .tab-btn{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; padding:9px 16px; border-radius:22px;
+    border:1px solid var(--line); background:var(--card); cursor:pointer; font-weight:600; color:var(--navy);
+    transition:.15s;
+  }
+  .tab-btn.active{background:var(--amber); border-color:var(--amber); color:#fff;}
+  .tab-panel{display:none; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:26px;}
+  .tab-panel.active{display:block;}
+  .tab-panel h3{font-size:19px; margin-bottom:10px;}
+  .tab-panel p{font-size:14.5px; line-height:1.7; color:var(--ink);}
+
+  /* ---------- JUSTIFICATION ---------- */
+  .just-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .just-card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px;}
+  .just-card .eyebrow{margin-bottom:10px; display:block;}
+  .just-card p{font-size:14px; line-height:1.7; color:var(--ink); margin:0;}
+
+  /* ---------- ROI ---------- */
+  .roi-table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  .roi-table th{
+    text-align:left; background:var(--navy); color:#fff; padding:12px 14px; font-weight:600;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.04em; text-transform:uppercase;
+  }
+  .roi-table td{padding:12px 14px; border-bottom:1px solid var(--line);}
+  .roi-table tr:nth-child(even) td{background:#FBFAF6;}
+  .roi-formula{
+    margin-top:22px; background:var(--teal-dim); border-radius:12px; padding:18px 22px;
+    font-family:'IBM Plex Mono',monospace; font-size:14px; color:var(--navy); font-weight:600;
+  }
+
+  footer{padding:56px 0 80px; text-align:center;}
+  footer .sig{font-family:'Fraunces',serif; font-size:20px; color:var(--navy); font-weight:600;}
+  footer .role{font-size:13px; color:var(--grey); margin-top:4px;}
+  footer .closing{max-width:560px; margin:0 auto 28px; font-size:14px; color:var(--grey); line-height:1.7;}
+
+  @media (max-width:820px){
+    .kpi-grid{grid-template-columns:repeat(2,1fr);}
+    .arch{grid-template-columns:1fr;}
+    .timeline{grid-template-columns:1fr;}
+    .hybrid{grid-template-columns:1fr;}
+    .gov-grid{grid-template-columns:1fr 1fr;}
+    .just-grid{grid-template-columns:1fr;}
+    .navlinks{display:none;}
+  }
+  @media (max-width:520px){
+    .gov-grid{grid-template-columns:1fr;}
+    .kpi-grid{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important; scroll-behavior:auto!important;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Fertilab <span>/</span> Automatización v2.0</div>
+    <div class="navlinks">
+      <a href="#kpis">KPIs</a>
+      <a href="#arquitectura">Arquitectura</a>
+      <a href="#fases">Fases</a>
+      <a href="#ia">IA híbrida</a>
+      <a href="#gobierno">Gobierno</a>
+      <a href="#aurora">Aurora</a>
+      <a href="#modalidad">Modalidad</a>
+      <a href="#roi">ROI</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="badge">VERSIÓN 2.0 — PROGRAMA ESTRATÉGICO</span>
+    <h1>Programa de Automatización Inteligente de Procesos Operativos</h1>
+    <p class="sub">Evolución del proyecto de automatización de Compras hacia un programa modular y medible.</p>
+    <div class="meta">
+      <div><b>Gonzalo Velazquez</b>Gestión de Existencias</div>
+      <div><b>Fertilab SA</b>Montevideo, agosto 2026</div>
+      <div><b>13 secciones</b>Arquitectura · KPIs · ROI</div>
+    </div>
+  </div>
+</header>
+
+<section id="evolucion">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">01 — Evolución del proyecto</span>
+      <h2>De una automatización sectorial a un programa escalable</h2>
+      <p>Esta versión incorpora arquitectura ampliada, indicadores de éxito, plan por fases, gobierno del software, inteligencia artificial complementaria y un marco de análisis de retorno de inversión. El proyecto deja de ser una automatización puntual del sector Compras para convertirse en un Programa de Automatización Inteligente de Procesos Operativos, concebido como base reutilizable para otras áreas del laboratorio — donde, en caso de que Fertilab lo requiera, también implicaría prestar tiempo para ayudar a automatizar otras áreas del laboratorio como las que se indicaron.</p>
+    </div>
+  </div>
+</section>
+
+<section id="objetivo">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">02 — Objetivo del programa</span>
+      <h2>Reducir intervención manual, error y tiempo de procesamiento</h2>
+      <p>A partir de la experiencia acumulada en la supervisión de Compras y Stock, y del conocimiento adquirido sobre el funcionamiento de GNS+, se propone automatizar el flujo operativo diario del sector: desde la recepción de comprobantes por mail hasta su ingreso, control y registro en GNS+ (facturas con y sin lote y vencimiento, actualización de precios, actualización de stock y movimientos entre depósitos).</p>
+      <p>El objetivo es reducir la intervención manual en tareas repetitivas, el margen de error humano y los tiempos de procesamiento, asegurando la continuidad de las tareas durante ausencias o licencias del personal. Esto permite redirigir horas de trabajo hacia el análisis de datos, la negociación con proveedores y la toma de decisiones, y sienta las bases de un modelo que — si resulta exitoso — podrá extenderse.</p>
+    </div>
+  </div>
+</section>
+
+<section id="kpis">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">04 — Indicadores de éxito</span>
+      <h2>Dashboard de KPIs</h2>
+      <p>Cada beneficio del programa se traduce en un indicador medible, para entender cómo se mediría el impacto de estos sistemas complemento.</p>
+      <p class="big-statement" style="font-size:clamp(19px,2.4vw,24px); margin-top:12px;">Esto se haría de forma automatizada, sin intervención humana.</p>
+    </div>
+    <table class="roi-table">
+      <tr><th>Indicador</th><th>Objetivo</th></tr>
+      <tr><td>Ahorro económico</td><td>Medición anual en base a las compras reales. Ejemplo: el mes pasado, la compra a Roche realizada de forma automatizada bajó de $3.418.260,75 a $2.904.044,60. Esto podría extenderse a todos los proveedores.</td></tr>
+      <tr><td>Capital inmovilizado en stock</td><td>Medición mensual del valor de stock a fin de mes. Bajó de $7.078.453,75 (feb-2026) a $4.337.833,44 (jul-2026) — una reducción del 38,7% en 6 meses, sin resignar disponibilidad. Esto ya se pudo ver personalmente: Andrea fue testigo de cómo se llegó a ese mínimo, con las heladeras casi vacías.</td></tr>
+      <tr><td>Tiempo promedio de ingreso de facturas</td><td>Estimado actual ≈87,5 facturas/mes → se ingresan en 2 sistemas en paralelo; quedaría automatizado en GNS+.</td></tr>
+      <tr><td>Errores de carga</td><td>Sin línea de base: hoy se detecta y corrige sin registro. En un flujo automatizado, este tipo de error por intervención manual dejaría de producirse.</td></tr>
+      <tr><td>Comprobantes procesados automáticamente</td><td>Línea de base: ≈87,5 facturas/mes (compras.csv) + ≈630 movimientos/mes (Movimientos.csv) + ≈73 obligaciones de compra/mes (GESTIODEOBLIGACIONES.xlsx, prom. últimos 12 meses) + ≈32 pedidos a extramuros/mes.</td></tr>
+      <tr><td>Horas hombre liberadas</td><td>Se usaría la PC libre de Stock desde las 13:30 hasta las 19:00, o según necesidad y programación, sin intervención manual.</td></tr>
+    </table>
+    <p class="kpi-note">Los valores se establecen sobre línea de base real: no se fijan porcentajes de antemano sin datos propios que los respalden.</p>
+    <div class="status-box" style="margin-top:24px;">
+      <b>La medición ya tiene con qué hacerse:</b> existen herramientas propias para relevar la línea de base — <code>informe_compras.py</code> (compras y ventas por período desde GNS+), <code>dias_en_uso.py</code> (duración de lotes en uso) y <code>dias_entre_compras.py</code> (frecuencia y proyección de compras).
+    </div>
+
+    <div class="section-head" style="margin-top:48px;">
+      <span class="eyebrow">Línea de base operativa</span>
+      <h2 style="font-size:24px;">Datos reales, no proyectados</h2>
+      <p>Con los archivos ya compartidos se pudo establecer una primera línea de base real de volumen operativo.</p>
+    </div>
+    <table class="roi-table">
+      <tr><th>Métrica</th><th>Valor actual</th><th>Fuente</th></tr>
+      <tr><td>Facturas de compra ingresadas</td><td>≈ 87,5 / mes</td><td>compras.csv (prom. últimos 12 meses)</td></tr>
+      <tr><td>Movimientos de stock registrados</td><td>≈ 630 / mes (≈ 29 / día hábil)</td><td>Movimientos.csv (prom. últimos 12 meses)</td></tr>
+      <tr><td>Obligaciones de compra generadas</td><td>≈ 73 / mes</td><td>GESTIODEOBLIGACIONES.xlsx (prom. últimos 12 meses)</td></tr>
+      <tr><td>Pedidos a extramuros</td><td>≈ 32 / mes</td><td>GESTIODEOBLIGACIONES.xlsx (prom. últimos 12 meses)</td></tr>
+    </table>
+    <p class="phase-note">Esta línea de base permite dimensionar el impacto esperado del programa. Los indicadores de tiempo y error requieren, además, datos de duración por tarea que hoy no se registran, y quedan para relevar en Fase 1.</p>
+
+    <div class="section-head" style="margin-top:48px;">
+      <span class="eyebrow">Estimación de impacto</span>
+      <h2 style="font-size:24px;">Ejemplo por proveedor</h2>
+      <p class="phase-note">* Estimación de cargar una factura a mano: 5 a 6 minutos fijos (abrir el sistema, cabecera, etc.) + 2 minutos por cada ítem que tiene esa factura. Por ejemplo, una factura de Roche con 5 ítems tardaría ≈16,5 min. Se estima un tiempo similar para generar la obligación correspondiente. No incluye buscar y descargar el comprobante del mail ni otros procesos adicionales.</p>
+    </div>
+    <table class="roi-table">
+      <tr><th>Proveedor</th><th>Facturas/mes</th><th>Ítems/factura*</th><th>Automatizado</th></tr>
+      <tr><td>Roche</td><td>≈ 22,5</td><td>≈5 (rango real: 1 a 17). Cada ítem implica buscar el artículo, cargar cantidad y precio, ingresar lote y vencimiento, y revisar y controlar el total antes de aceptar. Todo se haría automático dándole doble clic.</td><td>Generaría y cargaría tanto el pedido como la factura de Roche. Hoy se hacen en 2 sistemas en paralelo (e-Customer y GNS+); ambos pasos se automatizarían como un mismo sistema complemento.</td></tr>
+      <tr><td>Cabinsur (Biodiagnóstico)</td><td>≈ 11,5</td><td>3,3 (rango real: 1 a 22)</td><td>Generaría y cargaría tanto el pedido como la factura correspondiente.</td></tr>
+      <tr><td>Biokey</td><td>≈ 7,7</td><td>2,4 (rango real: 1 a 17)</td><td>Generaría y cargaría tanto el pedido como la factura correspondiente.</td></tr>
+      <tr><td>Resto de proveedores</td><td>≈ 46</td><td>2,6 (prom.)</td><td>Generaría y cargaría tanto el pedido como la factura correspondiente; alcance a definir por lote de proveedores.</td></tr>
+    </table>
+    <p class="phase-note">Tomando el detalle de compras.csv de los últimos 12 meses, se puede dimensionar cuánto tiempo insume hoy la carga manual de facturas por proveedor. A todas estas facturas también se les generan obligaciones en GNS+ — ambos procesos correrían de forma desatendida.</p>
+  </div>
+</section>
+
+<section id="arquitectura">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">03 — Arquitectura del sistema</span>
+      <h2>Cuatro capas, un sistema modular</h2>
+      <p>Cada módulo es un Sistema Complemento independiente a GNS+. Tocá cada capa para ver su función.</p>
+    </div>
+    <div class="arch">
+      <div class="arch-layers" id="layers">
+        <div class="layer active" data-i="0">
+          <div class="ltitle"><span class="dot"></span>Automatización base (reglas de negocio)</div>
+          <div class="ldesc">Sistema complemento que ejecuta las tareas repetitivas sobre GNS+, correo y proveedores, replicando de forma consistente los pasos que hoy realiza una persona.</div>
+        </div>
+        <div class="layer" data-i="1">
+          <div class="ltitle"><span class="dot"></span>Inteligencia artificial (complementaria)</div>
+          <div class="ldesc">Clasificación, interpretación de documentos y detección de anomalías, asistiendo a la capa base en los casos no cubiertos por reglas fijas.</div>
+        </div>
+        <div class="layer" data-i="2">
+          <div class="ltitle"><span class="dot"></span>Gobierno y datos</div>
+          <div class="ldesc">Registro de acciones, control de permisos, trazabilidad y respaldo de la información generada por cada módulo.</div>
+        </div>
+        <div class="layer" data-i="3">
+          <div class="ltitle"><span class="dot"></span>Integración y servicios</div>
+          <div class="ldesc">Cada sistema complemento expone entradas y salidas definidas, listo para conectarse a otros sistemas del laboratorio y al ecosistema Aurora.</div>
+        </div>
+      </div>
+      <div class="arch-visual">
+        <svg viewBox="0 0 320 340" xmlns="http://www.w3.org/2000/svg">
+          <g id="stack"></g>
+        </svg>
+      </div>
+    </div>
+    <div class="big-statement">Reutiliza las computadoras ya disponibles en el sector — sin inversión en hardware.</div>
+    <div class="status-box" style="margin-top:16px; border-left-color:var(--teal);">
+      <b>Modelo de ejecución:</b> el sector de Stock cuenta con dos PC — se puede usar una de las computadoras de Stock, la que queda libre. Esa PC puede quedar dedicada a correr los sistemas complementos con doble clic sobre cada archivo, o programarse en el Programador de Tareas de Windows para que a las 13:30 (cuando el sector queda con una sola persona) arranque sola y ponga a trabajar todos los agentes, sin intervención manual.
+    </div>
+  </div>
+</section>
+
+<section id="fases">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">05 — Hoja de ruta</span>
+      <h2>Implementación por fases</h2>
+      <p>Se prioriza para reducir riesgo y capturar valor de forma progresiva.</p>
+    </div>
+    <div class="status-box">
+      <b>El módulo de movimientos entre depósitos</b> ya opera con reglas fijas — se ejecuta bajo demanda, y ante una ausencia cualquier integrante del equipo resuelve la tarea abriendo el archivo correspondiente.
+    </div>
+    <div class="big-statement" style="font-size:clamp(19px,2.4vw,24px); margin-top:16px; margin-bottom:32px;">Esto ya fue observado en una demostración: con solo darle play al procesador de la cola de movimientos, el sistema entra a GNS+, selecciona el lote y el vencimiento correspondiente, ingresa la cantidad y el depósito destino, y confirma cada movimiento de forma autónoma, uno detrás de otro, sin intervención manual.</div>
+    <div class="status-box" style="border-left-color:var(--teal);">
+      <b>Herramientas propias de KPIs ya en uso:</b> en Stock se miden de forma concreta los KPIs de compras y de consumo de exámenes, que también se han podido visualizar y que ya se utilizan para tomar decisiones reales de pedido. El pedido a Roche del mes pasado se realizó íntegramente a partir de este historial de KPIs de compras, sin depender de los técnicos.
+    </div>
+    <p class="phase-note">El resto de los módulos del alcance funcional (procesamiento de mail, carga de comprobantes, pedidos, informes) funcionarían de manera similar: entrenando a la inteligencia artificial con la misma lógica que hoy aplica una persona, y mostrando distintos grados de avance según el módulo. Formalizarlos, documentarlos e incorporarles gobierno es un trabajo de integración que podría insumir entre 5 y 6 meses para que todo funcione sin errores y de la mejor manera.</p>
+    <p class="phase-note">Este proceso también requiere destinar tiempo a entrenar la IA en las reglas de nomenclatura y las particularidades de datos de cada proveedor.</p>
+    <p class="phase-note" style="margin-bottom:36px;">Esta hoja de ruta es una estimación: pueden surgir variaciones según lo que se solicite y nuevas oportunidades de automatización que se identifiquen en el camino.</p>
+    <div class="timeline">
+      <div class="phase"><div class="pnum">FASE 1</div><h3>Consolidación</h3><div class="horizon">0 – 2 meses</div>
+        <ul><li>Procesador de mails (discrimina PDF de Excel)</li><li>Descarga y procesa órdenes de compra</li><li>Ingreso automático en GNS+ de facturas, sin intervención manual</li><li>Pedidos Roche: generación automática en e-Customer y GNS+</li></ul></div>
+      <div class="phase"><div class="pnum">FASE 2</div><h3>Formalización</h3><div class="horizon">2 – 4 meses</div>
+        <ul><li>Movimientos entre depósitos (formalización)</li><li>Control de precios: carga automática, detectando anomalías</li><li>Conteo de inventario por voz: un asistente marca en el Excel de stock lo que se dicta durante el conteo, sin estar frente a la PC, y genera el ajuste o baja de stock cuando corresponde</li></ul></div>
+      <div class="phase"><div class="pnum">FASE 3</div><h3>Expansión</h3><div class="horizon">4 – 6 meses</div>
+        <ul><li>Stock mínimo con órdenes de compra sugeridas</li><li>Cronograma de compras: planifica todo el año; cada día indica qué corresponde solicitar para aprobar o rechazar — al aprobar, el pedido se genera solo en GNS+</li><li>Reportes automáticos</li></ul></div>
+    </div>
+    <p class="phase-note">La automatización clásica basada en reglas sigue siendo la base del sistema en todas las fases; la IA se incorpora como complemento para mejorar la capacidad de decisión, sin reemplazar la lógica determinística ya probada.</p>
+  </div>
+</section>
+
+<section id="ia">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">06 — Modelo híbrido</span>
+      <h2>Reglas + inteligencia artificial</h2>
+      <p>La IA interviene donde hoy se requiere criterio humano — no reemplaza la automatización clásica.</p>
+    </div>
+    <div class="hybrid">
+      <div class="arch-visual" style="min-height:260px;">
+        <svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="115" cy="115" r="82" fill="#2E8C82" opacity="0.55"/>
+          <circle cx="185" cy="115" r="82" fill="#C4823A" opacity="0.55"/>
+          <circle cx="150" cy="175" r="82" fill="#3E6BA8" opacity="0.45"/>
+          <text x="80" y="90" font-family="IBM Plex Mono" font-size="10" fill="#fff">Reglas de</text>
+          <text x="78" y="103" font-family="IBM Plex Mono" font-size="10" fill="#fff">negocio</text>
+          <text x="205" y="90" font-family="IBM Plex Mono" font-size="10" fill="#fff">Inteligencia</text>
+          <text x="215" y="103" font-family="IBM Plex Mono" font-size="10" fill="#fff">artificial</text>
+          <text x="130" y="215" font-family="IBM Plex Mono" font-size="10" fill="#fff">Criterio</text>
+          <text x="128" y="228" font-family="IBM Plex Mono" font-size="10" fill="#fff">operativo</text>
+        </svg>
+      </div>
+      <ul>
+        <li>Reconocimiento inteligente de comprobantes: el procesador de mails clasificaría por reglas (factura, remito, nota de crédito); la IA se sumaría para cubrir los formatos que esas reglas no anticipan.</li>
+        <li>Interpretación de PDFs complejos o con formatos no estándar: hoy hay que enseñar a reconocer cada estructura por patrón, como ya se hizo con Roche; la IA extendería ese reconocimiento a proveedores con formatos variables.</li>
+        <li>Detección de anomalías (precios, importes, duplicados)</li>
+        <li>Validación de inconsistencias entre GNS+ y los documentos recibidos</li>
+        <li>Aprendizaje de nuevos formatos de proveedores: hoy cada proveedor nuevo requiere programar sus reglas a mano, como se hizo con Roche; la IA permitiría proponer ese mapeo sin programarlo de cero.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="gobierno">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">07 — Gobierno del software</span>
+      <h2>Auditable, no dependiente de una persona</h2>
+      <p>Cada sistema complemento incorpora una carpeta de archivos internos (JSON) que sostiene:</p>
+    </div>
+    <div class="gov-grid">
+      <div class="gov-item"><div class="gi-title"><span class="tick">✓</span>Logs</div>Registro completo de todas las acciones ejecutadas.</div>
+      <div class="gov-item"><div class="gi-title"><span class="tick">✓</span>Auditoría</div>Trazabilidad de cada proceso ejecutado por el sistema.</div>
+      <div class="gov-item"><div class="gi-title"><span class="tick">✓</span>Permisos</div>Control de acceso y modificación por usuario.</div>
+      <div class="gov-item"><div class="gi-title"><span class="tick">✓</span>Historial</div>Registro de modificaciones sobre cada módulo.</div>
+      <div class="gov-item"><div class="gi-title"><span class="tick">✓</span>Intervención humana</div>Activación automática ante dudas o inconsistencias.</div>
+      <div class="gov-item"><div class="gi-title"><span class="tick">✓</span>Documentación</div>Documentación técnica completa de cada módulo.</div>
+    </div>
+  </div>
+</section>
+
+<section id="aurora">
+  <div class="wrap">
+    <div class="aurora-wrap">
+      <div class="section-head">
+        <span class="eyebrow" style="color:#E8B98C;">08 — Ecosistema Aurora</span>
+        <h2>De módulo de Compras a servicio del ecosistema</h2>
+        <p>Diseñados como servicios independientes, pero con la posibilidad de integrarse para que no queden como soluciones aisladas — reutilizando la misma arquitectura base.</p>
+      </div>
+      <div class="aurora-visual">
+        <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
+          <line x1="130" y1="110" x2="330" y2="60" stroke="#2E8C82" stroke-width="1.5" opacity="0.7"/>
+          <line x1="130" y1="110" x2="330" y2="110" stroke="#2E8C82" stroke-width="1.5" opacity="0.7"/>
+          <line x1="130" y1="110" x2="330" y2="160" stroke="#2E8C82" stroke-width="1.5" opacity="0.7"/>
+          <line x1="330" y1="60" x2="540" y2="35" stroke="#3A5A63" stroke-width="1" stroke-dasharray="3 4" opacity="0.6"/>
+          <line x1="330" y1="110" x2="540" y2="90" stroke="#3A5A63" stroke-width="1" stroke-dasharray="3 4" opacity="0.6"/>
+          <line x1="330" y1="110" x2="540" y2="140" stroke="#3A5A63" stroke-width="1" stroke-dasharray="3 4" opacity="0.6"/>
+          <line x1="330" y1="160" x2="540" y2="190" stroke="#3A5A63" stroke-width="1" stroke-dasharray="3 4" opacity="0.6"/>
+
+          <circle cx="130" cy="110" r="34" fill="#C4823A"/>
+          <text x="130" y="106" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#fff" font-weight="600">COMPRAS</text>
+          <text x="130" y="118" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#fff">v2.0 activo</text>
+
+          <circle cx="330" cy="60" r="20" fill="#2E8C82"/><text x="330" y="64" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#fff">Mails</text>
+          <circle cx="330" cy="110" r="20" fill="#2E8C82"/><text x="330" y="114" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#fff">GNS+</text>
+          <circle cx="330" cy="160" r="20" fill="#2E8C82"/><text x="330" y="164" text-anchor="middle" font-family="IBM Plex Mono" font-size="7.5" fill="#fff">Depósitos</text>
+
+          <circle cx="540" cy="35" r="17" fill="none" stroke="#B9CFCB" stroke-width="1.3"/><text x="540" y="39" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#B9CFCB">Contab.</text>
+          <circle cx="540" cy="90" r="17" fill="none" stroke="#B9CFCB" stroke-width="1.3"/><text x="540" y="94" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#B9CFCB">Facturac.</text>
+          <circle cx="540" cy="140" r="17" fill="none" stroke="#B9CFCB" stroke-width="1.3"/><text x="540" y="144" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#B9CFCB">Calidad</text>
+          <circle cx="540" cy="190" r="17" fill="none" stroke="#B9CFCB" stroke-width="1.3"/><text x="540" y="194" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#B9CFCB">RR.HH.</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="continuidad">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">09 — Continuidad del proyecto</span>
+      <h2>Documentación para no depender de una persona</h2>
+    </div>
+    <div class="gov-grid" style="grid-template-columns:repeat(4,1fr);">
+      <div class="gov-item">Manuales de instalación</div>
+      <div class="gov-item">Manuales operativos</div>
+      <div class="gov-item">Procedimientos de mantenimiento</div>
+      <div class="gov-item">Definición de responsables</div>
+    </div>
+    <p class="phase-note" style="margin-top:22px;">Instalar y mantener estos sistemas complemento no es instantáneo: implica diseño de lógica, programación, pruebas en ambiente controlado, verificación contra el sistema real y corrección de errores — un ciclo que se repite ante cada actualización de GNS+, del correo o de sistemas de proveedores como Roche.</p>
+  </div>
+</section>
+
+<section id="modalidad">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">10 — Modalidad de implementación</span>
+      <h2>Tres caminos posibles</h2>
+      <p>Se prioriza la implementación como tarea complementaria al rol actual; el servicio tercerizado y la detección de nuevos procesos se presentan como alternativas a evaluar.</p>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="a">Opción A — Tarea complementaria</button>
+      <button class="tab-btn" data-tab="b">Opción B — Servicio tercerizado</button>
+      <button class="tab-btn" data-tab="c">Opción C — Nuevos procesos</button>
+    </div>
+    <div class="tab-panel active" id="tab-a">
+      <h3>Tarea complementaria al rol actual</h3>
+      <p>El desarrollo, instalación, mantenimiento y monitoreo se incorporan como tarea adicional al rol actual. Dado el tiempo que insume su desarrollo, se reconocería en parte la autoría de estos desarrollos durante su permanencia en la empresa; la propiedad del software se transfiere a Fertilab SA en el momento que se acuerde o al finalizar la relación laboral. Si Fertilab requiere extender el programa a otras áreas del laboratorio, ese trabajo adicional se enmarca dentro de esta misma modalidad, dado el tiempo adicional que implica.</p>
+    </div>
+    <div class="tab-panel" id="tab-b">
+      <h3>Servicio tercerizado</h3>
+      <p>Implicaría constituir una empresa unipersonal, desde la cual se facturaría a Fertilab la instalación inicial y un servicio mensual de mantenimiento, soporte y aseguramiento del flujo. En este esquema la propiedad del software sería del prestador del servicio — queda a evaluación de la dirección según la política institucional de propiedad intelectual.</p>
+    </div>
+    <div class="tab-panel" id="tab-c">
+      <h3>Detección de nuevos procesos</h3>
+      <p>Instancia continua para identificar nuevos procesos susceptibles de automatización dentro de Compras u otros sectores del laboratorio, con un reconocimiento económico por tiempo dedicado y avance para el laboratorio, como se plantea en la Opción A.</p>
+    </div>
+  </div>
+</section>
+
+<section id="justificacion">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">11 — Justificación estratégica</span>
+      <h2>Por qué atacar tareas de bajo valor agregado</h2>
+      <p>Son las que identifiqué en el trabajo diario y continuo con mi sector.</p>
+    </div>
+    <div class="just-grid">
+      <div class="just-card"><span class="eyebrow">El costo visible</span>
+        <p>Los sistemas complemento atacan las tareas de bajo valor agregado: ingreso de facturas, lectura de mails, clasificación de comprobantes, movimientos entre depósitos, carga de pedidos, actualización de precios, reportes y demás tareas indicadas — que, aun siendo de bajo valor, consumen una parte significativa del tiempo operativo diario.</p></div>
+      <div class="just-card"><span class="eyebrow">El costo oculto</span>
+        <p>Durante licencias o ausencias, estas tareas deben enseñarse a quien cubre la función, sumando tiempo de capacitación. Al automatizarlas, ese tiempo —de ejecución y de enseñanza— se libera con solo ejecutar el archivo correspondiente.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="roi">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">12 — Retorno de inversión</span>
+      <h2>Marco de análisis de ROI</h2>
+      <p>La línea de base se relevará durante la Fase 1, en paralelo a la consolidación de los primeros módulos, para expresar los KPIs también en términos económicos. El costo de implementación se reduce porque el modelo de ejecución (sección Arquitectura) reutiliza las computadoras ya disponibles en el sector, sin inversión en hardware adicional.</p>
+      <p>Comparación entre el escenario actual (línea de base) y el escenario automatizado.</p>
+    </div>
+    <table class="roi-table">
+      <tr><th>Variable</th><th>Método de medición</th></tr>
+      <tr><td>Horas hombre dedicadas a tareas manuales</td><td>Registro de tiempo antes / después, por tarea</td></tr>
+      <tr><td>Errores de carga y sus correcciones</td><td>Conteo de incidencias registradas en GNS+</td></tr>
+      <tr><td>Tiempo promedio de procesamiento (comprobante / pedido)</td><td>Timestamps del sistema</td></tr>
+      <tr><td>Costo hora del recurso involucrado</td><td>Datos provistos por RR.HH.</td></tr>
+      <tr><td>Costo de desarrollo y mantenimiento del sistema</td><td>Horas de desarrollo asignadas al programa</td></tr>
+    </table>
+    <div class="roi-formula">ROI = (Ahorro generado − Costo de desarrollo y mantenimiento) / Costo de desarrollo y mantenimiento</div>
+  </div>
+</section>
+
+<footer id="cierre">
+  <p class="closing">Quedo a disposición para presentar una fecha de algún avance técnico que sirva como entendimiento, y evaluar en conjunto la modalidad más adecuada para el laboratorio.</p>
+  <div class="sig">Gonzalo Velazquez</div>
+  <div class="role">Gestión de Existencias — Fertilab SA</div>
+</footer>
+
+<script>
+  // Nav active state
+  const links = document.querySelectorAll('.navlinks a');
+  const sections = [...links].map(l => document.querySelector(l.getAttribute('href')));
+  window.addEventListener('scroll', () => {
+    let idx = sections.findIndex(s => s && s.getBoundingClientRect().top > 120);
+    if (idx === -1) idx = sections.length - 1;
+    else idx = Math.max(0, idx - 1);
+    links.forEach(l => l.classList.remove('active'));
+    if (links[idx]) links[idx].classList.add('active');
+  });
+
+  // Architecture layers
+  const layerEls = document.querySelectorAll('.layer');
+  const stackColors = ["#2E8C82","#C4823A","#3E6BA8","#7A6FB0"];
+  const stackLabels = ["Reglas","IA","Gobierno","Integración"];
+  function drawStack(activeI){
+    const g = document.getElementById('stack');
+    g.innerHTML = "";
+    const w = 260, h = 60, gap = 12, x = 30, startY = 30;
+    stackLabels.forEach((label, i) => {
+      const y = startY + i*(h+gap);
+      const rect = document.createElementNS("http://www.w3.org/2000/svg","rect");
+      rect.setAttribute("x", x); rect.setAttribute("y", y);
+      rect.setAttribute("width", w); rect.setAttribute("height", h);
+      rect.setAttribute("rx", 10);
+      rect.setAttribute("fill", stackColors[i]);
+      rect.setAttribute("opacity", i === activeI ? "1" : "0.32");
+      g.appendChild(rect);
+      const text = document.createElementNS("http://www.w3.org/2000/svg","text");
+      text.setAttribute("x", x + w/2); text.setAttribute("y", y + h/2 + 4);
+      text.setAttribute("text-anchor","middle");
+      text.setAttribute("font-family","IBM Plex Mono");
+      text.setAttribute("font-size","12");
+      text.setAttribute("fill","#fff");
+      text.setAttribute("font-weight","600");
+      text.textContent = label;
+      g.appendChild(text);
+    });
+  }
+  drawStack(0);
+  layerEls.forEach(layer => {
+    layer.addEventListener('click', () => {
+      layerEls.forEach(l => l.classList.remove('active'));
+      layer.classList.add('active');
+      drawStack(parseInt(layer.dataset.i));
+    });
+  });
+
+  // Modality tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
